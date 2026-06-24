@@ -204,14 +204,96 @@
 //   return response;
 // }
 
+// "use server";
+
+// import { revalidatePath } from "next/cache";
+
+// import { prisma } from "@/app/lib/prisma";
+// import { generateResponseAction } from "@/modules/ai/actions/generate-response.action";
+// import { ChatController } from "@/modules/chat/controllers/chat.controller";
+
+// import { MessageController } from "../controllers/message.controller";
+// import { CreateMessageSchema } from "../validations/create-message.schema";
+
+// const controller = new MessageController();
+// const chatController = new ChatController();
+
+// export async function sendMessageAction(values: unknown) {
+//   console.log("Received values:", values);
+
+//   const validatedFields = CreateMessageSchema.safeParse(values);
+
+//   if (!validatedFields.success) {
+//     throw new Error(
+//       JSON.stringify(validatedFields.error.flatten())
+//     );
+//   }
+
+//   const { content, chatId } = validatedFields.data;
+
+//   // USER MESSAGE
+//   // await controller.createMessage({
+//   //   content,
+//   //   role: "USER",
+//   //   chatId,
+//   // });
+//   const userMessage = await controller.createMessage({
+//   content,
+//   role: "USER",
+//   chatId,
+// });
+// await controller.createMessage({
+//   content: response || "No response from AI",
+//   role: "ASSISTANT",
+//   chatId,
+//   parentId: userMessage.id,
+// });
+
+//   console.log("User message saved");
+
+//   // AUTO RENAME CHAT
+//   const chat = await prisma.chat.findUnique({
+//     where: {
+//       id: chatId,
+//     },
+//   });
+
+//   if (chat?.title === "New Chat") {
+//     await chatController.renameChat(
+//       chatId,
+//       content.slice(0, 30) // first 30 chars
+//     );
+//   }
+
+//   // AI RESPONSE
+//   const response = await generateResponseAction(content);
+
+//   console.log("AI RESPONSE =", response);
+
+//   // ASSISTANT MESSAGE
+//   await controller.createMessage({
+//     content: response || "No response from AI",
+//     role: "ASSISTANT",
+//     chatId,
+//   });
+
+//   console.log("Assistant message saved");
+
+//   // Refresh current chat page
+//   revalidatePath(`/dashboard/chat/${chatId}`);
+
+//   // Refresh sidebar chat list
+//   revalidatePath("/dashboard");
+
+//   return response;
+// }
+
 "use server";
 
 import { revalidatePath } from "next/cache";
-
 import { prisma } from "@/app/lib/prisma";
 import { generateResponseAction } from "@/modules/ai/actions/generate-response.action";
 import { ChatController } from "@/modules/chat/controllers/chat.controller";
-
 import { MessageController } from "../controllers/message.controller";
 import { CreateMessageSchema } from "../validations/create-message.schema";
 
@@ -232,7 +314,7 @@ export async function sendMessageAction(values: unknown) {
   const { content, chatId } = validatedFields.data;
 
   // USER MESSAGE
-  await controller.createMessage({
+  const userMessage = await controller.createMessage({
     content,
     role: "USER",
     chatId,
@@ -250,7 +332,7 @@ export async function sendMessageAction(values: unknown) {
   if (chat?.title === "New Chat") {
     await chatController.renameChat(
       chatId,
-      content.slice(0, 30) // first 30 chars
+      content.slice(0, 30)
     );
   }
 
@@ -264,15 +346,17 @@ export async function sendMessageAction(values: unknown) {
     content: response || "No response from AI",
     role: "ASSISTANT",
     chatId,
+    parentId: userMessage.id,
   });
 
   console.log("Assistant message saved");
 
-  // Refresh current chat page
+  // Refresh page
   revalidatePath(`/dashboard/chat/${chatId}`);
-
-  // Refresh sidebar chat list
   revalidatePath("/dashboard");
 
-  return response;
+  return {
+    success: true,
+    response,
+  };
 }

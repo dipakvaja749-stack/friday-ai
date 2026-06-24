@@ -32,7 +32,7 @@ interface Props {
   chatId: string;
 }
 
-export default async function MessageList({ chatId }: Props) {
+export default async function MessageList({ chatId ,}: Props) {
   const messages = await getMessagesAction(chatId);
 
   if (messages.length === 0) {

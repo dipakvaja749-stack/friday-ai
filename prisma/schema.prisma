@@ -88,6 +88,17 @@ model Chat {
   updatedAt DateTime  @updatedAt
 }
 
+// model Message {
+//   id        String    @id @default(cuid())
+
+//   content   String
+//   role      Role
+
+//   chatId    String
+//   chat      Chat      @relation(fields: [chatId], references: [id])
+
+//   createdAt DateTime  @default(now())
+// }
 model Message {
   id        String    @id @default(cuid())
 
@@ -96,6 +107,10 @@ model Message {
 
   chatId    String
   chat      Chat      @relation(fields: [chatId], references: [id])
+
+  parentId  String?
+  parent    Message?  @relation("MessageRelation", fields: [parentId], references: [id])
+  replies   Message[] @relation("MessageRelation")
 
   createdAt DateTime  @default(now())
 }
