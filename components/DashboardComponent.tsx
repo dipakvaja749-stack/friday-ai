@@ -19,7 +19,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { sendMessageAction } from "@/modules/message/actions/send-message.action";
 
-
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                    */
 /* -------------------------------------------------------------------------- */
@@ -39,10 +38,22 @@ interface Suggestion {
 /* -------------------------------------------------------------------------- */
 
 const suggestions: Suggestion[] = [
-  { icon: <Rocket className="h-4 w-4 text-orange-400" />, label: "Build a SaaS application" },
-  { icon: <FileCode2 className="h-4 w-4 text-sky-400" />, label: "Generate API documentation" },
-  { icon: <Megaphone className="h-4 w-4 text-pink-400" />, label: "Create a marketing strategy" },
-  { icon: <GraduationCap className="h-4 w-4 text-emerald-400" />, label: "Learn Spring Boot" },
+  {
+    icon: <Rocket className="h-4 w-4 text-orange-400" />,
+    label: "Build a SaaS application",
+  },
+  {
+    icon: <FileCode2 className="h-4 w-4 text-sky-400" />,
+    label: "Generate API documentation",
+  },
+  {
+    icon: <Megaphone className="h-4 w-4 text-pink-400" />,
+    label: "Create a marketing strategy",
+  },
+  {
+    icon: <GraduationCap className="h-4 w-4 text-emerald-400" />,
+    label: "Learn Spring Boot",
+  },
 ];
 
 const fadeUp = {
@@ -56,7 +67,6 @@ const fadeUp = {
 
 // In a real app this would come from route params / a created chat record.
 
-
 /* -------------------------------------------------------------------------- */
 /*  Page                                                                     */
 /* -------------------------------------------------------------------------- */
@@ -69,7 +79,6 @@ interface DashboardComponentProps {
 export default function DashboardComponent({
   chatId,
 }: DashboardComponentProps) {
-
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [prompt, setPrompt] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
@@ -81,7 +90,10 @@ export default function DashboardComponent({
 
   // Auto scroll to newest message.
   React.useEffect(() => {
-    scrollAnchorRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    scrollAnchorRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    });
   }, [messages, isLoading]);
 
   async function handleSend() {
@@ -95,29 +107,29 @@ export default function DashboardComponent({
 
     try {
       // 2. Call backend action.
-      
 
       // // 3. Append assistant response.
       // setMessages((prev) => [...prev, { role: "ASSISTANT", content: response.content }]);
       const response = await sendMessageAction({
-  content,
-  chatId: chatId,
-});
+        content,
+        chatId: chatId,
+      });
 
-setMessages((prev) => [
-  ...prev,
-  {
-    role: "ASSISTANT",
-    content:
-      response ?? "Something went wrong while generating a response.",
-  },
-]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "ASSISTANT",
+          content:
+            response ?? "Something went wrong while generating a response.",
+        },
+      ]);
     } catch (error) {
       setMessages((prev) => [
         ...prev,
         {
           role: "ASSISTANT",
-          content: "Something went wrong while generating a response. Please try again.",
+          content:
+            "Something went wrong while generating a response. Please try again.",
         },
       ]);
     } finally {
@@ -195,7 +207,13 @@ setMessages((prev) => [
         <Button
           type="button"
           size="icon"
-          aria-label={isLoading ? "Waiting for response" : prompt.trim() ? "Send message" : "Start voice mode"}
+          aria-label={
+            isLoading
+              ? "Waiting for response"
+              : prompt.trim()
+                ? "Send message"
+                : "Start voice mode"
+          }
           onClick={prompt.trim() ? handleSend : undefined}
           disabled={isLoading}
           className="h-11 w-11 flex-shrink-0 rounded-full bg-white text-black transition-transform duration-200 hover:scale-110 hover:bg-zinc-200 focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
@@ -219,13 +237,22 @@ setMessages((prev) => [
       <main className="flex min-h-screen w-full flex-col items-center justify-center bg-[#09090B] px-4 py-12">
         <div className="flex w-full max-w-4xl flex-col items-center">
           {/* Optimize Prompt Button */}
-          <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0} className="mb-6">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            custom={0}
+            className="mb-6"
+          >
             <Button
               variant="outline"
               size="sm"
               className="w-fit rounded-full border-zinc-800 bg-transparent px-4 text-sm font-medium text-zinc-300 transition-all duration-200 hover:scale-[1.03] hover:border-zinc-700 hover:bg-zinc-900 hover:text-white"
             >
-              <Sparkles className="mr-1.5 h-4 w-4 text-amber-300" aria-hidden="true" />
+              <Sparkles
+                className="mr-1.5 h-4 w-4 text-amber-300"
+                aria-hidden="true"
+              />
               Optimize Prompt
             </Button>
           </motion.div>
@@ -242,7 +269,13 @@ setMessages((prev) => [
           </motion.h1>
 
           {/* AI Input Container */}
-          <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0.2} className="w-full">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            custom={0.2}
+            className="w-full"
+          >
             {inputBar}
           </motion.div>
 
@@ -268,7 +301,9 @@ setMessages((prev) => [
                 <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-zinc-800 transition-colors duration-200 group-hover:bg-zinc-700">
                   {s.icon}
                 </span>
-                <span className="text-zinc-200 group-hover:text-white">{s.label}</span>
+                <span className="text-zinc-200 group-hover:text-white">
+                  {s.label}
+                </span>
               </motion.button>
             ))}
           </motion.div>

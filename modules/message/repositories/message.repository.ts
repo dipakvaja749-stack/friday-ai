@@ -227,15 +227,37 @@ async updateMessageWithResponse(
   }
 }
 
+// async deleteMessageWithResponse(id: string) {
+//   // delete assistant response first
+//   await prisma.message.deleteMany({
+//     where: {
+//       parentId: id,
+//     },
+//   });
+
+//   // delete user message
+//   await prisma.message.delete({
+//     where: {
+//       id,
+//     },
+//   });
+// }
 async deleteMessageWithResponse(id: string) {
-  // delete assistant response first
+
+  const replies = await prisma.message.findMany({
+    where: {
+      parentId: id,
+    },
+  });
+
+  console.log("REPLIES =", replies);
+
   await prisma.message.deleteMany({
     where: {
       parentId: id,
     },
   });
 
-  // delete user message
   await prisma.message.delete({
     where: {
       id,
@@ -243,3 +265,4 @@ async deleteMessageWithResponse(id: string) {
   });
 }
 }
+

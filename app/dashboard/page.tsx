@@ -337,12 +337,40 @@ import DashboardComponent from "@/components/DashboardComponent";
 //   );
 // }
 
-export default async function ChatPage({
-  params,
-}: {
-  params: Promise<{ chatId: string }>;
-}) {
-  const { chatId } = await params;
+// export default async function ChatPage({
+//   params,
+// }: {
+//   params: Promise<{ chatId: string }>;
+// }) {
+//   const { chatId } = await params;
 
-  return <DashboardComponent chatId={chatId} />;
+//   return <DashboardComponent chatId={chatId} />;
+// }
+import { redirect } from "next/navigation";
+import { ChatController } from "@/modules/chat/controllers/chat.controller";
+import { auth } from "@/auth";
+
+export default async function DashboardPage() {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  const controller = new ChatController();
+
+  const chats = await controller.getChats(session.user.id);
+
+  // Existing chat હોય તો open કરો
+  if (chats.length > 0) {
+    redirect(`/dashboard/chat/${chats[0].id}`);
+  }
+
+  // New chat create કરો
+  const chat = await controller.createChat({
+    title: "New Chat",
+    userId: session.user.id,
+  });
+
+  redirect(`/dashboard/chat/${chat.id}`);
 }
