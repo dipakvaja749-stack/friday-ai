@@ -1011,12 +1011,15 @@ import {
   FileText,
 } from "lucide-react";
 
+import { useStreamContext } from "@/components/stream-context";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { sendMessageAction } from "../actions/send-message.action";
 import { uploadFileAction } from "../actions/upload-file.action";
 import { useChatContext } from "@/components/chat-context";
+import { streamChat } from "@/modules/ai/utils/stream-chat";
 
 interface Props {
   chatId: string;
@@ -1033,6 +1036,7 @@ export default function ChatInput({ chatId }: Props) {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { setStreamingMessage } = useStreamContext();
 
   const { setIsPending } = useChatContext();
 
@@ -1080,12 +1084,29 @@ export default function ChatInput({ chatId }: Props) {
           fileType = result.fileType;
         }
 
-        await sendMessageAction({
-          content: currentMessage,
-          chatId,
-          fileUrl,
-          fileType,
-        });
+        // await sendMessageAction({
+        //   content: currentMessage,
+        //   chatId,
+        //   fileUrl,
+        //   fileType,
+        // });
+        // Save the user message first
+await sendMessageAction({
+  content: currentMessage,
+  chatId,
+  fileUrl,
+  fileType,
+});
+
+// Start streaming the assistant response
+await streamChat(currentMessage, (chunk) => {
+  setStreamingMessage((prev) => prev + " " + chunk);
+});
+
+// Clear streamed text before refreshing
+setStreamingMessage("");
+
+router.refresh();
 
         removeFile();
 

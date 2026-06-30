@@ -33,4 +33,16 @@ export class ChatController {
   async renameChat(id: string, title: string) {
     return this.service.renameChat(id, title);
   }
+  async searchChats(
+  userId: string,
+  query: string
+) {
+  return this.service.searchChats(
+    userId,
+    query
+  );
+}
+async togglePin(id: string) {
+  return this.service.togglePin(id);
+}
 }

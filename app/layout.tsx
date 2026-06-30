@@ -76,6 +76,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import LayoutWrapper from "@/components/layout-wrapper";
+import { StreamProvider } from "@/components/stream-context";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -97,7 +98,8 @@ export default function RootLayout({
       <body
         className={`${inter.variable} font-sans bg-background text-foreground antialiased`}
       >
-        <LayoutWrapper>{children}</LayoutWrapper>
+        <LayoutWrapper>
+          <StreamProvider>{children}</StreamProvider></LayoutWrapper>
       </body>
     </html>
   );

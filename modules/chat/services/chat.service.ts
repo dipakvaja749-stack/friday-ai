@@ -34,4 +34,10 @@ export class ChatService {
   async renameChat(id: string, title: string) {
     return this.repository.rename(id, title);
   }
+  async searchChats(userId: string, query: string) {
+  return this.repository.search(userId, query);
+}
+async togglePin(id: string) {
+  return this.repository.togglePin(id);
+}
 }

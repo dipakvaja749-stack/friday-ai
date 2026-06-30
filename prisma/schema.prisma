@@ -70,14 +70,29 @@ model User {
   emailVerified DateTime?
 
   chats         Chat[]
+    memories UserMemory[]
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
 
+// model Chat {
+//   id        String    @id @default(cuid())
+//   title     String
+
+//   userId    String
+//   user      User      @relation(fields: [userId], references: [id])
+
+//   messages  Message[]
+
+//   createdAt DateTime  @default(now())
+//   updatedAt DateTime  @updatedAt
+// }
 model Chat {
   id        String    @id @default(cuid())
   title     String
+
+  pinned    Boolean   @default(false)
 
   userId    String
   user      User      @relation(fields: [userId], references: [id])
@@ -87,7 +102,6 @@ model Chat {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
-
 
 // model Message {
 //   id        String    @id @default(cuid())
@@ -150,4 +164,19 @@ model Message {
 enum Role {
   USER
   ASSISTANT
+}
+
+model UserMemory {
+  id        String   @id @default(cuid())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  key       String
+  value     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, key])
 }

@@ -136,14 +136,19 @@ export function ChatItem({
           <DropdownMenuItem onClick={() => setIsRenaming(true)}>
             <Pencil className="h-3.5 w-3.5" /> Rename
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onTogglePin(chat.id)}>
+          {/* <DropdownMenuItem onClick={() => onTogglePin(chat.id)}>
             {chat.pinned ? (
               <PinOff className="h-3.5 w-3.5" />
             ) : (
               <Pin className="h-3.5 w-3.5" />
             )}
             {chat.pinned ? "Unpin" : "Pin"}
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
+          <DropdownMenuItem
+  onClick={() => onTogglePin(chat.id)}
+>
+  {chat.pinned ? "Unpin Chat" : "Pin Chat"}
+</DropdownMenuItem>
           <DropdownMenuSeparator />
           {/* <DropdownMenuItem destructive onClick={() => onDelete(chat.id)}>
             <Trash2 className="h-3.5 w-3.5" /> Delete
